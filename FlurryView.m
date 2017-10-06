@@ -16,7 +16,7 @@ __private_extern__ double CurrentTime(void)
     return time.tv_sec + (time.tv_usec / 1000000.0); 
 }
 
-@interface MonitorCell : NSTableHeaderCell {
+@interface MonitorCell : NSImageCell {
 	NSString *index;
 }
 - (id)initWithIndex:(NSString *)newIndex;

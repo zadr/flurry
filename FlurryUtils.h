@@ -4,7 +4,7 @@
 
 #define RANDOM_PRESET_KEY @"randomPreset"
 #define RANDOM_DISPLAY_KEY @"randomDisplay"
-#define VERSION_STRING [[[NSBundle bundleWithIdentifier:@"com.calumr.Flurry"] infoDictionary] \
+#define VERSION_STRING [[[NSBundle mainBundle] infoDictionary] \
 								objectForKey:@"CFBundleShortVersionString"]
 
 #define UPDATE_COLOUR_NOTIF @"updateColours"
