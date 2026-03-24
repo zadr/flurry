@@ -1,11 +1,10 @@
 #import "FlurryView.h"
-#import <OpenGL/glu.h>
 #import <sys/time.h>
+#import <QuartzCore/CAMetalLayer.h>
 
 #include "Texture.h"
-
-//#define GL_DONE  [[_glView openGLContext] flushBuffer]
-#define GL_DONE  glFlush()
+#include "MetalRenderer.h"
+#include "Smoke.h"
 
 __private_extern__ double CurrentTime(void)
 {
@@ -35,21 +34,9 @@ __private_extern__ double CurrentTime(void)
 {
     if (self = [super initWithFrame:frameRect isPreview:preview])
     {
-        NSOpenGLPixelFormatAttribute attribs[] =
-            {
-                        NSOpenGLPFAAccelerated,
-                        NSOpenGLPFAColorSize, 32,
-                        //NSOpenGLPFAMinimumPolicy,
-                        //NSOpenGLPFADoubleBuffer, 
-                        //NSOpenGLPFAClosestPolicy,
-                        0
-            };
-        NSOpenGLPixelFormat *format = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attribs] autorelease];
-        
-        _glView = [[[FlurryOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format] autorelease];
-        [self addSubview:_glView];
-		
-		garbageHack = YES;
+        self.wantsLayer = YES;
+
+        garbageHack = YES;
         
         presetManager = [[PresetManager alloc] init];
         [presetManager setTarget:self];
@@ -63,9 +50,14 @@ __private_extern__ double CurrentTime(void)
     return self;
 }
 
+- (CALayer *)makeBackingLayer
+{
+    return [CAMetalLayer layer];
+}
+
 - (void)dealloc
 {
-    [_glView removeFromSuperview];
+    [_renderer release];
     [presetManager release];
     [super dealloc];
 }
@@ -73,19 +65,11 @@ __private_extern__ double CurrentTime(void)
 - (void)setFrameSize:(NSSize)newSize
 {
     [super setFrameSize:newSize];
-    [_glView setFrameSize:newSize];
-    [[_glView openGLContext] makeCurrentContext];
-	
-    glViewport(0.0, 0.0, newSize.width, newSize.height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, newSize.width, 0, newSize.width);
-    glMatrixMode(GL_MODELVIEW);
-    
-    glClearColor(0.0,0.0,0.0,1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    
-    GL_DONE;
+
+    if (!_renderer) {
+        _renderer = [[MetalRenderer alloc] initWithLayer:(CAMetalLayer *)self.layer];
+    }
+    [_renderer resize:NSSizeToCGSize(newSize)];
 }
 
 - (void)startAnimation
@@ -93,9 +77,15 @@ __private_extern__ double CurrentTime(void)
     int i;
 	
     [super startAnimation];
-    [[_glView openGLContext] makeCurrentContext];
     
-    MakeTexture();
+    if (!_renderer) {
+        _renderer = [[MetalRenderer alloc] initWithLayer:(CAMetalLayer *)self.layer];
+    }
+
+    unsigned char *texData = GenerateParticleTextureData();
+    [_renderer createParticleTextureFromData:texData
+                                       width:PARTICLE_TEXTURE_WIDTH
+                                      height:PARTICLE_TEXTURE_HEIGHT];
     
     if (randomisePreset)
         [presetManager selectRandomPresetToView];
@@ -106,23 +96,23 @@ __private_extern__ double CurrentTime(void)
         
         [flurry randomiseDisplays:randomiseDisplay];
         
-        if ([flurry shouldDrawInView:_glView randomise:randomiseDisplay])
+        if ([flurry shouldDrawInView:self randomise:randomiseDisplay])
         {
             info = [flurry info];
-            GLResize([_glView frame].size.width, [_glView frame].size.height);
-            GLSetupRC();
+            ResizeScene(self.frame.size.width, self.frame.size.height);
+            SetupScene(info);
         }
     }
 	
 	garbageHack = YES;
-    
-    glClearColor(0.0,0.0,0.0,1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-	
 	_oldFrameTime = TimeInSecondsSinceStart();
-    
-    GL_DONE;
 }
+
+// Maximum vertex count for star/spark rendering
+// Star: 30 rotations * 12 verts = 360
+// Sparks: 12 sparks * 12 rotations * 12 verts = 1728
+// Total worst case: ~2100 verts per flurry
+#define MAX_UNTEXTURED_VERTS 4096
 
 - (void)animateOneFrame
 {
@@ -133,39 +123,71 @@ __private_extern__ double CurrentTime(void)
 	if ([[self window] attachedSheet])
 		return;
     
-	[[_glView openGLContext] makeCurrentContext];
-	
 	// dim the existing screen contents
     newFrameTime = TimeInSecondsSinceStart();
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     alpha = 5.0 * (newFrameTime - _oldFrameTime);
     if (alpha > 0.2) alpha = 0.2;
 	
 	if (garbageHack) {
 		alpha = 1.0;
-		garbageHack = NO;
 	}
+
+    [_renderer beginFrameWithClear:garbageHack];
+	garbageHack = NO;
 	
-    glColor4f(0.0, 0.0, 0.0, alpha);
-    glRectd(0, 0, [_glView frame].size.width, [_glView frame].size.height);
+    [_renderer drawDimmingQuadWithAlpha:alpha];
     _oldFrameTime = newFrameTime;
 	
 	for (i=0;i<[[[presetManager viewPreset] flurries] count];i++)
 	{
 		Flurry *flurry = [[[presetManager viewPreset] flurries] objectAtIndex:i];
-		if ([flurry shouldDrawInView:_glView randomise:randomiseDisplay])
+		if ([flurry shouldDrawInView:self randomise:randomiseDisplay])
 		{
 			info = [flurry info];
 			hasDrawn = YES;
-			GLResize([_glView frame].size.width, [_glView frame].size.height);
-			GLRenderScene();
+			ResizeScene(self.frame.size.width, self.frame.size.height);
+			
+			// Update physics (particles, star, sparks, smoke)
+			UpdateScene();
+			
+			// Draw smoke (fills arrays, returns quad count)
+			int smokeQuadCount = DrawSmoke_Scalar(info->s);
+			if (smokeQuadCount > 0) {
+			    [_renderer drawSmokeWithVertices:(const float *)info->s->seraphimVertices
+			                             colors:(const float *)info->s->seraphimColors
+			                          texCoords:info->s->seraphimTextures
+			                          quadCount:smokeQuadCount];
+			}
+			
+			// Draw star and sparks into CPU buffers
+			{
+			    static float untexVerts[MAX_UNTEXTURED_VERTS * 2];
+			    static float untexColors[MAX_UNTEXTURED_VERTS * 4];
+			    int totalVerts = 0;
+			    
+			    int starVerts = DrawStar(info->star,
+			                             untexVerts + totalVerts * 2,
+			                             untexColors + totalVerts * 4);
+			    totalVerts += starVerts;
+			    
+			    int j;
+			    for (j = 0; j < info->numStreams; j++) {
+			        int sparkVerts = DrawSpark(info->spark[j],
+			                                   untexVerts + totalVerts * 2,
+			                                   untexColors + totalVerts * 4);
+			        totalVerts += sparkVerts;
+			    }
+			    
+			    if (totalVerts > 0) {
+			        [_renderer drawUntexturedTriangles:untexVerts
+			                                   colors:untexColors
+			                              vertexCount:totalVerts];
+			    }
+			}
 		}
 	}
 	
-	if (hasDrawn)
-    {
-        GL_DONE;
-    }
+    [_renderer endFrame];
 }
 
 - (void)stopAnimation
@@ -205,24 +227,18 @@ __private_extern__ double CurrentTime(void)
 	
 	[[flurryTable delegate] tableViewSelectionDidChange:NULL];
 	
-	//if ([[NSScreen screens] count] > 1)
 	{
 		int i;
 		NSButtonCell *checkBox = [[NSButtonCell alloc] init];
 		[checkBox setButtonType:NSSwitchButton];
 		[checkBox setTitle:@""];
-#if 0
-		for (i=0;i<3;i++)	// test table with 3 monitors attached
-#else
 		for (i=0;i<[[NSScreen screens] count];i++)
-#endif
 		{
 			NSString *n = [[NSNumber numberWithInt:(i + 1)] stringValue];
 			NSTableColumn *tc = [[NSTableColumn alloc] initWithIdentifier:n];
 			MonitorCell *monitorCell = [[MonitorCell alloc] initWithIndex:i];
 			[tc setWidth:30];
 			[tc setDataCell:checkBox];
-			//[[tc headerCell] setTitle:n];
 			[tc setHeaderCell:monitorCell];
 			[tc setResizingMask:NSTableColumnNoResizing];
 			[tc setEditable:YES];
@@ -376,8 +392,6 @@ __private_extern__ double CurrentTime(void)
 	[self writeDefaults];
 	
 	defaults = [ScreenSaverDefaults defaultsForModuleWithName:@"Flurry"];	
-	// so we can test the preset we are editing, and ignore random
-	// presets being used
 	
 	[defaults setBool:NO forKey:RANDOM_PRESET_KEY];
 	[defaults setBool:NO forKey:RANDOM_DISPLAY_KEY];

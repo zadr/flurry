@@ -8,18 +8,21 @@
 #ifndef __STD_h_
 #define __STD_h_
 
-#include <Carbon/Carbon.h>
-#include <OpenGL/glu.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
 
 #include "PTypes.h"
 #include "Gl_saver.h"
 
-//#define FastDistance2D(x,y) hypot(x,y)
-
 __private_extern__ float FastDistance2D(float x, float y);
-#ifdef __VEC__
-__private_extern__ inline vector float FastDistance2DV(vector float x, vector float y);
-#endif __VEC__
 
 #define RandFlt(min, max) (min + (max - min) * rand() / (float) RAND_MAX)
 

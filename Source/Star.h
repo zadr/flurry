@@ -5,7 +5,7 @@
 #if !defined(STAR_H)
 #define STAR_H
 
-typedef struct Star  
+typedef struct Star
 {
 	float position[3];
 	bool ate;
@@ -14,7 +14,7 @@ typedef struct Star
 } Star;
 
 __private_extern__ void UpdateStar(Star *s);
-__private_extern__ void DrawStar(Star *s);
+__private_extern__ int DrawStar(Star *s, float *outVertices, float *outColors);
 __private_extern__ void InitStar(Star *s);
 
 #endif // !defined(STAR_H)

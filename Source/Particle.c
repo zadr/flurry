@@ -5,7 +5,6 @@
 #include "Std.h"
 #include "Particle.h"
 #define MAXANGLES 16384
-extern int theTexture;
 
 // used to compute the min and max of two expresions
 #define MIN(a, b)  (((a) < (b)) ? (a) : (b)) 
@@ -127,20 +126,14 @@ __private_extern__ void UpdateParticle(Particle *p)
 
 __private_extern__ void InitParticle(Particle *p)
 {
-//	float tempx,tempy;
 	int r1,r2;
 	p->oldz = RandFlt(2500.0f,22500.0f);
-//	do
-//	{
 		r1 = rand();
 		r2 = rand();
 		p->oldx = ((float) (r1 % (int) info->sys_glWidth) - info->sys_glWidth * 0.5f) / 
 								(info->sys_glWidth / p->oldz);
 		p->oldy = (info->sys_glHeight * 0.5f - (float) (r2 % (int) info->sys_glHeight)) / 
 								(info->sys_glWidth / p->oldz);
-//		tempx = (oldx * info->sys_glWidth / 75.0f) + info->sys_glWidth/2.0f;
-//		tempy = (oldy * info->sys_glWidth / 75.0f) + info->sys_glHeight/2.0f;
-//	} while (fabs(tempx) < info->sys_glWidth + 100.0 && fabs(tempy) < info->sys_glHeight + 100.0);
 	p->deltax = 0.0f;
 	p->deltay = 0.0f;
 	p->deltaz = (float) -starSpeed;

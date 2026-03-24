@@ -4,6 +4,7 @@
 
 #include "Std.h"
 #include "Star.h"
+#include "MatrixUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -19,7 +20,28 @@ __private_extern__ void InitStar(Star *s)
     s->mystery = RandFlt(0.0, 10.0);
 }
 
-__private_extern__ void DrawStar(Star *s)
+// Convert a GL_QUAD_STRIP of 6 vertices into 4 triangles (12 triangle vertices).
+// Strip order: 0,1,2,3,4,5 -> triangles (0,1,2), (2,1,3), (2,3,4), (4,3,5)
+static int EmitQuadStrip6(float *outV, float *outC, int offset,
+                          float vx[6], float vy[6],
+                          float cr[6], float cg[6], float cb[6], float ca[6])
+{
+    int tri[12] = {0,1,2, 2,1,3, 2,3,4, 4,3,5};
+    int i;
+    for (i = 0; i < 12; i++) {
+        int idx = tri[i];
+        int o = offset + i;
+        outV[o*2+0] = vx[idx];
+        outV[o*2+1] = vy[idx];
+        outC[o*4+0] = cr[idx];
+        outC[o*4+1] = cg[idx];
+        outC[o*4+2] = cb[idx];
+        outC[o*4+3] = ca[idx];
+    }
+    return 12;
+}
+
+__private_extern__ int DrawStar(Star *s, float *outVertices, float *outColors)
 {
     float width,sx,sy;
     float w,z;
@@ -30,47 +52,72 @@ __private_extern__ void DrawStar(Star *s)
     float c = 0.08f;
     float r,g,b;
     int k;
-    
-    const float black[4] = {0.0f,0.0f,0.0f,1.0f};
+    int totalVerts = 0;
 
     if(s->ate == false) {
-        return;
+        return 0;
     }
 
     width = 50000.0f * info->sys_glWidth / 1024.0f;
-    
+
     z = s->position[2];
     sx = s->position[0] * info->sys_glWidth / z + info->sys_glWidth * 0.5f;
     sy = s->position[1] * info->sys_glWidth / z + info->sys_glHeight * 0.5f;
     w = width*4.0f / z;
-    
+
     screenx = sx;
     screeny = sy;
-    
-    glPushMatrix();
-    glTranslatef(screenx,screeny,0.0f);
     scale = w/100.0f;
-    glScalef(scale,scale,0.0f);
+
+    // Build model matrix: translate then scale
+    simd_float4x4 modelMatrix = simd_mul(matrix_translate(screenx, screeny), matrix_scale(scale, scale));
+
     for (k=0;k<30;k++) {
         a = ((float) (rand() % 3600)) / 10.0f;
-        glRotatef(a,0.0f,0.0f,1.0f);
-        glBegin(GL_QUAD_STRIP);
-        glColor4fv(black);
-        glVertex2f(-3.0f,0.0f);
-        a = 3.0f + (float) (rand() & 2047) * c;
-        glVertex2f(-3.0f,a);
+        float aRad = a * (PI / 180.0f);
+        modelMatrix = simd_mul(modelMatrix, matrix_rotate_z(aRad));
+
+        // 6 strip vertices in local space
+        float lx[6], ly[6];
+        float cr[6], cg[6], cb[6], ca[6];
+
+        float stripLen = 3.0f + (float) (rand() & 2047) * c;
         r = 0.125f + (float) (rand() % 875) / 1000.0f;
         g = 0.125f + (float) (rand() % 875) / 1000.0f;
         b = 0.125f + (float) (rand() % 875) / 1000.0f;
-        glColor4f(r,g,b,1.0f);
-        glVertex2f(0.0f,0.0f);
-        glColor4fv(black);
-        glVertex2f(0.0f,a);
-        glVertex2f(3.0f,0.0f);
-        glVertex2f(3.0f,a);
-        glEnd();
+
+        // Vertex 0: black, (-3, 0)
+        lx[0] = -3.0f; ly[0] = 0.0f;
+        cr[0] = 0.0f; cg[0] = 0.0f; cb[0] = 0.0f; ca[0] = 1.0f;
+        // Vertex 1: black, (-3, stripLen)
+        lx[1] = -3.0f; ly[1] = stripLen;
+        cr[1] = 0.0f; cg[1] = 0.0f; cb[1] = 0.0f; ca[1] = 1.0f;
+        // Vertex 2: colored, (0, 0)
+        lx[2] = 0.0f; ly[2] = 0.0f;
+        cr[2] = r; cg[2] = g; cb[2] = b; ca[2] = 1.0f;
+        // Vertex 3: black, (0, stripLen)
+        lx[3] = 0.0f; ly[3] = stripLen;
+        cr[3] = 0.0f; cg[3] = 0.0f; cb[3] = 0.0f; ca[3] = 1.0f;
+        // Vertex 4: black, (3, 0)
+        lx[4] = 3.0f; ly[4] = 0.0f;
+        cr[4] = 0.0f; cg[4] = 0.0f; cb[4] = 0.0f; ca[4] = 1.0f;
+        // Vertex 5: black, (3, stripLen)
+        lx[5] = 3.0f; ly[5] = stripLen;
+        cr[5] = 0.0f; cg[5] = 0.0f; cb[5] = 0.0f; ca[5] = 1.0f;
+
+        // Transform all 6 vertices by modelMatrix
+        float vx[6], vy[6];
+        int v;
+        for (v = 0; v < 6; v++) {
+            simd_float2 transformed = matrix_transform_point(modelMatrix, lx[v], ly[v]);
+            vx[v] = transformed.x;
+            vy[v] = transformed.y;
+        }
+
+        totalVerts += EmitQuadStrip6(outVertices, outColors, totalVerts,
+                                     vx, vy, cr, cg, cb, ca);
     }
-    glPopMatrix();
+    return totalVerts;
 }
 
 #define BIGMYSTERY 1800.0

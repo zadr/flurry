@@ -7,15 +7,9 @@
  *
  */
 
-#import <OpenGL/gl.h>
+#define PARTICLE_TEXTURE_WIDTH 256
+#define PARTICLE_TEXTURE_HEIGHT 256
 
-// Texture builds the textures used by the Flurry streamer. The texture is loaded
-// directly into OpenGL. The texture number is returned in the global variable
-// named 'theTexture', and is used exclusively by the Windows code.
-
-// Here's the global texture variable
-__private_extern__ GLuint theTexture;
-
-// MakeTexture is a big do-all function that creates the textures and initializes
-// the 'theTexture' global variable.
-__private_extern__ void MakeTexture(void);
+// GenerateParticleTextureData creates the procedural texture and returns
+// a pointer to the static 256x256 RG (luminance+alpha) texture data.
+__private_extern__ unsigned char *GenerateParticleTextureData(void);
