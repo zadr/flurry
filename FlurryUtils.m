@@ -164,10 +164,6 @@
 		{
 			free(flurry_info->p[i]);
 		}
-		/*for (i=0;i<NUMSMOKEPARTICLES;i++)
-		{
-			free(flurry_info->s->p[i]);
-		}*/
 		free(flurry_info->s);
 		free(flurry_info->star);
 		for (i=0;i<64;i++)
@@ -380,19 +376,6 @@
 	{
 		cellFrame = NSInsetRect(cellFrame, 1, 1);
 		[(NSColor *)[self objectValue] drawSwatchInRect:cellFrame];
-		//[[NSColor blackColor] set];
-		//NSFrameRectWithWidth(cellFrame, 1);
 	}
 }
-@end
-
-
-@implementation FlurryOpenGLView
-/*- (void)drawRect:(NSRect)rects
-{
-    NSView *superview = [self superview];
-    [superview lockFocus];
-    [superview drawRect:rects];
-    [superview unlockFocus];
-}*/
 @end

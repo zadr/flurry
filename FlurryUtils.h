@@ -64,6 +64,3 @@
 
 @interface ColourCell : NSCell { }
 @end
-
-@interface FlurryOpenGLView : NSOpenGLView { }
-@end
