@@ -2,7 +2,7 @@
 #import <OpenGL/glu.h>
 #import <sys/time.h>
 
-#include <Texture.h>
+#include "Texture.h"
 
 //#define GL_DONE  [[_glView openGLContext] flushBuffer]
 #define GL_DONE  glFlush()
