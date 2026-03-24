@@ -7,8 +7,8 @@
  *
  */
 
-#include <Texture.h>
-#include <PTypes.h>
+#include "Texture.h"
+#include "PTypes.h"
 
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
