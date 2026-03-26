@@ -1,4 +1,5 @@
 #import "PresetManager.h"
+#import "FlurryAuditLog.h"
 
 @implementation PresetManager
 
@@ -23,6 +24,7 @@
 		}
 		else
 		{
+			[[FlurryAuditLog sharedLog] logWarning:@"Preset version mismatch or no saved presets; reverting to defaults" source:@"PresetManager"];
 			presetsData = [NSData data];
 			[defaults setObject:presetsData forKey:@"presets"];
 			[defaults setInteger:0 forKey:@"viewPresetIndex"];
@@ -194,7 +196,10 @@
 		[self refreshMenu];
 	}
 	else
+	{
+		[[FlurryAuditLog sharedLog] logWarning:@"Cannot delete the last preset" source:@"PresetManager"];
 		NSBeep();
+	}
 }
 
 - (IBAction)doneEditing:(id)sender

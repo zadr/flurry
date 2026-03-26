@@ -1,4 +1,5 @@
 #import "FlurryUtils.h"
+#import "FlurryAuditLog.h"
 
 
 @implementation FlurryPreset
@@ -97,6 +98,10 @@
 		name = [[coder decodeObject] retain];
 		shortcut = [[coder decodeObject] retain];
 		flurries = [[coder decodeObject] retain];
+		if (name == nil || shortcut == nil || flurries == nil)
+		{
+			[[FlurryAuditLog sharedLog] logWarning:@"Preset data missing expected field during decode" source:@"FlurryPreset"];
+		}
 	}
     return self;
 }
@@ -258,7 +263,11 @@
 	[coder decodeValueOfObjCType:@encode(float) at:&flurry_info->streamExpansion];
 	[coder decodeValueOfObjCType:@encode(float) at:&flurry_info->star->rotSpeed];
 	name = [[coder decodeObject] retain];
-	
+	if (name == nil)
+	{
+		[[FlurryAuditLog sharedLog] logWarning:@"Flurry data missing name during decode" source:@"Flurry"];
+	}
+
     return self;
 }
 

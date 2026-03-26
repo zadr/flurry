@@ -25,6 +25,7 @@
 		E4DF71170C8161E000573540 /* Texture.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF71000C8161E000573540 /* Texture.c */; };
 		E4DF71870C8163CF00573540 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4DF71860C8163CF00573540 /* OpenGL.framework */; };
 		E4DF71CF0C81666C00573540 /* Flurry.icns in Resources */ = {isa = PBXBuildFile; fileRef = E4DF71CE0C81666C00573540 /* Flurry.icns */; };
+		FA0A0001268A000000000001 /* FlurryAuditLog.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0A0003268A000000000001 /* FlurryAuditLog.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +64,8 @@
 		E4DF71860C8163CF00573540 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
 		E4DF71910C81653900573540 /* Flurry_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry_Prefix.pch; sourceTree = "<group>"; };
 		E4DF71CE0C81666C00573540 /* Flurry.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Flurry.icns; sourceTree = "<group>"; };
+		FA0A0002268A000000000001 /* FlurryAuditLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryAuditLog.h; sourceTree = "<group>"; };
+		FA0A0003268A000000000001 /* FlurryAuditLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryAuditLog.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +106,8 @@
 			children = (
 				E4DF70F10C8161E000573540 /* Source */,
 				E4DF71910C81653900573540 /* Flurry_Prefix.pch */,
+				FA0A0002268A000000000001 /* FlurryAuditLog.h */,
+				FA0A0003268A000000000001 /* FlurryAuditLog.m */,
 				E4DF70EB0C8161E000573540 /* FlurryUtils.h */,
 				E4DF70EC0C8161E000573540 /* FlurryUtils.m */,
 				E4DF70ED0C8161E000573540 /* FlurryView.h */,
@@ -245,6 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA0A0001268A000000000001 /* FlurryAuditLog.m in Sources */,
 				E4DF71040C8161E000573540 /* FlurryUtils.m in Sources */,
 				E4DF71060C8161E000573540 /* FlurryView.m in Sources */,
 				E4DF71080C8161E000573540 /* PresetManager.m in Sources */,

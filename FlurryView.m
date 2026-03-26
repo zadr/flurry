@@ -1,4 +1,5 @@
 #import "FlurryView.h"
+#import "FlurryAuditLog.h"
 #import <OpenGL/glu.h>
 #import <sys/time.h>
 
@@ -65,6 +66,9 @@ __private_extern__ double CurrentTime(void)
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:FlurryAuditErrorNotification
+                                                  object:nil];
     [_glView removeFromSuperview];
     [presetManager release];
     [super dealloc];
@@ -238,7 +242,13 @@ __private_extern__ double CurrentTime(void)
 							target:self
 							selector:@selector(refreshColours:)
 							userInfo:NULL repeats:YES] retain];
-	
+
+	_configSheetVisible = YES;
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(auditErrorLogged:)
+												 name:FlurryAuditErrorNotification
+											   object:nil];
+
     return window;
 }
 
@@ -352,8 +362,10 @@ __private_extern__ double CurrentTime(void)
 		[flurryTable reloadData];
 		[[flurryTable delegate] tableViewSelectionDidChange:NULL];
 	}
-	else
+	else {
+		[[FlurryAuditLog sharedLog] logWarning:@"Cannot delete the last flurry" source:@"FlurryView"];
 		NSBeep();
+	}
 }
 
 - (void)writeDefaults
@@ -389,6 +401,10 @@ __private_extern__ double CurrentTime(void)
 
 - (IBAction)saveAndCloseSheet:(id)sender
 {
+	_configSheetVisible = NO;
+	[[NSNotificationCenter defaultCenter] removeObserver:self
+													name:FlurryAuditErrorNotification
+												  object:nil];
 	[[self window] makeFirstResponder:nil];
 	[tableRefreshTimer invalidate];
 	[tableRefreshTimer release];
@@ -438,20 +454,48 @@ __private_extern__ double CurrentTime(void)
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
 	int selection = [flurryTable selectedRow];
-	
+
 	NSParameterAssert(selection >= 0 && selection < [[[presetManager currentPreset] flurries] count]);
-	
+
 	if ([flurryTable numberOfSelectedRows])
 	{
 		Flurry *flurry = [[[presetManager currentPreset] flurries] objectAtIndex:selection];
-		
+
 		info = [flurry info];
-		
+
 		[colourMenu selectItemAtIndex:info->currentColorMode];
 		[streamCountSlider setIntValue:info->numStreams];
 		[thicknessSlider setFloatValue:sqrt(info->streamExpansion)];
 		[speedSlider setFloatValue:info->star->rotSpeed];
 	}
+}
+
+- (void)auditErrorLogged:(NSNotification *)notification
+{
+	if (!_configSheetVisible || window == nil || ![window isVisible])
+		return;
+
+	FlurryAuditEntry *entry = [[notification userInfo] objectForKey:@"entry"];
+
+	NSAlert *alert = [[NSAlert alloc] init];
+	if ([entry severity] == FlurryAuditSeverityError)
+	{
+		[alert setAlertStyle:NSCriticalAlertStyle];
+		[alert setMessageText:@"Flurry Error"];
+	}
+	else
+	{
+		[alert setAlertStyle:NSWarningAlertStyle];
+		[alert setMessageText:@"Flurry Warning"];
+	}
+	[alert setInformativeText:[entry message]];
+	[alert addButtonWithTitle:@"OK"];
+
+	[alert beginSheetModalForWindow:window
+					  modalDelegate:nil
+					 didEndSelector:NULL
+						contextInfo:NULL];
+	[alert release];
 }
 
 @end

@@ -12,6 +12,7 @@
     PresetManager *presetManager;
     double _oldFrameTime;
     
+    BOOL _configSheetVisible;
     BOOL garbageHack;
     /*
         BUG? - When looking at a preview in System Prefernces the OpenGL view is full of random data from the video card (eg. click on another GL saver, then Flurry). For some reason, glClear in startAnimation doesn't clear. When garbageHack is YES, the animateOneFrame method clears the screen to black. 
