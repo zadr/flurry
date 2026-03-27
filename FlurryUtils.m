@@ -69,6 +69,14 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[flurries release];
+	[name release];
+	[shortcut release];
+	[super dealloc];
+}
+
 - (id)copyWithZone:(NSZone *)zone
 {
 	FlurryPreset *copy = [[FlurryPreset alloc] init];
@@ -83,6 +91,28 @@
 	return copy;
 }
 
+#if TARGET_OS_TV
++ (BOOL)supportsSecureCoding { return YES; }
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+	[coder encodeObject:name forKey:@"name"];
+	[coder encodeObject:shortcut forKey:@"shortcut"];
+	[coder encodeObject:flurries forKey:@"flurries"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+	if (self = [super init])
+	{
+		name = [[coder decodeObjectOfClass:[NSString class] forKey:@"name"] retain];
+		shortcut = [[coder decodeObjectOfClass:[NSString class] forKey:@"shortcut"] retain];
+		NSSet *flurryClasses = [NSSet setWithObjects:[NSMutableArray class], [Flurry class], nil];
+		flurries = [[coder decodeObjectOfClasses:flurryClasses forKey:@"flurries"] retain];
+	}
+	return self;
+}
+#else
 - (void)encodeWithCoder:(NSCoder *)coder
 {
 	[coder encodeObject:name];
@@ -100,6 +130,7 @@
 	}
     return self;
 }
+#endif
 
 - (void)addFlurry:(Flurry *)flurry
 {
@@ -146,12 +177,12 @@
 {
 	Flurry *f = [[Flurry alloc] init];
 	global_info_t *fInfo = [f info];
-	
+
 	fInfo->numStreams = s;
 	fInfo->currentColorMode = c;
 	fInfo->streamExpansion = t;
 	fInfo->star->rotSpeed = sp;
-	
+
 	return [f autorelease];
 }
 
@@ -173,6 +204,7 @@
 		free(flurry_info);
 	}
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+	[name release];
 	[super dealloc];
 }
 
@@ -181,39 +213,39 @@
 	if (self = [super init])
 	{
 		int i;
-		
+
 		screens = 1;
-		name = @"Flurry";
-		
+		name = [@"Flurry" retain];
+
 		flurry_info = (global_info_t *)malloc(sizeof(global_info_t));
 		flurry_info->flurryRandomSeed = RandFlt(0.0, 300.0);
-	
+
 		flurry_info->numStreams = 5;
 		flurry_info->streamExpansion = 100;
 		flurry_info->currentColorMode = tiedyeColorMode;
-		
+
 		for (i=0;i<MAXNUMPARTICLES;i++)
 		{
 			flurry_info->p[i] = malloc(sizeof(Particle));
 		}
-		
+
 		flurry_info->s = malloc(sizeof(SmokeV));
 		InitSmoke(flurry_info->s);
-		
+
 		flurry_info->star = malloc(sizeof(Star));
 		InitStar(flurry_info->star);
 		flurry_info->star->rotSpeed = 1.0;
-		
+
 		for (i=0;i<64;i++)
 		{
 			flurry_info->spark[i] = malloc(sizeof(Spark));
 			InitSpark(flurry_info->spark[i]);
 		}
 	}
-	
+
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateColour:)
 				name:UPDATE_COLOUR_NOTIF object:NULL];
-	
+
 	return self;
 }
 
@@ -222,18 +254,46 @@
 	Flurry *copy = [[Flurry alloc] init];
 	if (copy)
 	{
-		int i;
 		[copy setName:name];
 		[copy info]->numStreams = flurry_info->numStreams;
 		[copy info]->streamExpansion = flurry_info->streamExpansion;
 		[copy info]->currentColorMode = flurry_info->currentColorMode;
 		[copy info]->star->rotSpeed = flurry_info->star->rotSpeed;
+#if !TARGET_OS_TV
+		int i;
 		for (i=0;i<32;i++)
 			[copy setDraws:[self shouldDrawOnScreenIndex:i randomise:NO] onScreen:i];
+#endif
 	}
 	return copy;
 }
 
+#if TARGET_OS_TV
++ (BOOL)supportsSecureCoding { return YES; }
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+	[coder encodeInt32:screens forKey:@"screens"];
+	[coder encodeInt32:flurry_info->currentColorMode forKey:@"colorMode"];
+	[coder encodeInt32:flurry_info->numStreams forKey:@"numStreams"];
+	[coder encodeFloat:flurry_info->streamExpansion forKey:@"streamExpansion"];
+	[coder encodeFloat:flurry_info->star->rotSpeed forKey:@"rotSpeed"];
+	[coder encodeObject:name forKey:@"name"];
+}
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+	self = [self init];
+	screens = [coder decodeInt32ForKey:@"screens"];
+	flurry_info->currentColorMode = [coder decodeInt32ForKey:@"colorMode"];
+	flurry_info->numStreams = [coder decodeInt32ForKey:@"numStreams"];
+	flurry_info->streamExpansion = [coder decodeFloatForKey:@"streamExpansion"];
+	flurry_info->star->rotSpeed = [coder decodeFloatForKey:@"rotSpeed"];
+	[name release];
+	name = [[coder decodeObjectOfClass:[NSString class] forKey:@"name"] retain];
+	return self;
+}
+#else
 - (void)encodeWithCoder:(NSCoder *)coder
 {
 	[coder encodeValueOfObjCType:@encode(unsigned int) at:&screens];
@@ -247,16 +307,17 @@
 - (id)initWithCoder:(NSCoder *)coder
 {
 	self = [self init];
-	
+
 	[coder decodeValueOfObjCType:@encode(unsigned int) at:&screens];
 	[coder decodeValueOfObjCType:@encode(ColorModes) at:&flurry_info->currentColorMode];
 	[coder decodeValueOfObjCType:@encode(int) at:&flurry_info->numStreams];
 	[coder decodeValueOfObjCType:@encode(float) at:&flurry_info->streamExpansion];
 	[coder decodeValueOfObjCType:@encode(float) at:&flurry_info->star->rotSpeed];
 	name = [[coder decodeObject] retain];
-	
+
     return self;
 }
+#endif
 
 - (NSString *)name {
 	return name;
@@ -276,12 +337,14 @@
 	UpdateSparkColour(info->spark[0]);
 }
 
+#if !TARGET_OS_TV
 - (id)colour {
 	FlurryColour *c = [[FlurryColour alloc] init];
 	[c setFlurry:self];
 	return c;
 }
 - (void)setColour:(id)colour { }
+#endif
 
 - (NSNumber *)streamCount {
 	return [NSNumber numberWithInt:flurry_info->numStreams];
@@ -297,7 +360,7 @@
 	return flurry_info;
 }
 
-
+#if !TARGET_OS_TV
 - (void)randomiseDisplays:(BOOL)goRandom
 {
 	randomFactor = goRandom ? (rand() >> 3 ^ rand() >> 6) : screens;
@@ -318,9 +381,11 @@
 - (BOOL)shouldDrawInView:(NSView *)view randomise:(BOOL)randomise{
 	return [self shouldDrawOnScreen:[[view window] screen] randomise:randomise];
 }
+#endif
 @end
 
 
+#if !TARGET_OS_TV
 @implementation FlurryColour
 - (id)copyWithZone:(NSZone *)zone
 {
@@ -357,7 +422,7 @@
 			[[NSColor yellowColor] set];
 			break;
 		default:
-			[[NSColor colorWithDeviceRed:[flurry info]->spark[0]->color[0]*3 
+			[[NSColor colorWithDeviceRed:[flurry info]->spark[0]->color[0]*3
 									green:[flurry info]->spark[0]->color[1]*3
 									blue:[flurry info]->spark[0]->color[2]*3
 									alpha:1.0] set];
@@ -371,7 +436,7 @@
 	[[NSColor selectedControlColor] set];
 	if ([self isHighlighted])
 		NSRectFill(cellFrame);
-	
+
 	if ([(NSObject *)[self objectValue] isKindOfClass:[NSColor class]])
 	{
 		cellFrame = NSInsetRect(cellFrame, 1, 1);
@@ -379,3 +444,4 @@
 	}
 }
 @end
+#endif

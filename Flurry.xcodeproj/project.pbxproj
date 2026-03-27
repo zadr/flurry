@@ -28,6 +28,29 @@
 		AA000003000000000000AAAA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000004000000000000AAAA /* QuartzCore.framework */; };
 		AA000005000000000000AAAA /* MetalRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AA000006000000000000AAAA /* MetalRenderer.m */; };
 		AA000007000000000000AAAA /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = AA000008000000000000AAAA /* Shaders.metal */; };
+		/* FlurryTV build files */
+		BB000001000000000000BB01 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BB000010000000000000BB10 /* main.m */; };
+		BB000002000000000000BB02 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BB000012000000000000BB12 /* AppDelegate.m */; };
+		BB000003000000000000BB03 /* FlurryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB000014000000000000BB14 /* FlurryViewController.m */; };
+		BB000004000000000000BB04 /* FlurryPresetManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BB000016000000000000BB16 /* FlurryPresetManager.m */; };
+		BB000005000000000000BB05 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB000018000000000000BB18 /* SettingsViewController.m */; };
+		BB000006000000000000BB06 /* FlurryUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70EC0C8161E000573540 /* FlurryUtils.m */; };
+		BB000007000000000000BB07 /* Gl_saver.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70F20C8161E000573540 /* Gl_saver.c */; };
+		BB000008000000000000BB08 /* Particle.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70F40C8161E000573540 /* Particle.c */; };
+		BB000009000000000000BB09 /* Smoke.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70F70C8161E000573540 /* Smoke.c */; };
+		BB00000A000000000000BB0A /* Spark.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70FA0C8161E000573540 /* Spark.c */; };
+		BB00000B000000000000BB0B /* Star.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70FC0C8161E000573540 /* Star.c */; };
+		BB00000C000000000000BB0C /* Std.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF70FE0C8161E000573540 /* Std.c */; };
+		BB00000D000000000000BB0D /* Texture.c in Sources */ = {isa = PBXBuildFile; fileRef = E4DF71000C8161E000573540 /* Texture.c */; };
+		BB00000E000000000000BB0E /* MetalRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AA000006000000000000AAAA /* MetalRenderer.m */; };
+		BB00000F000000000000BB0F /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = AA000008000000000000AAAA /* Shaders.metal */; };
+		BB000020000000000000BB20 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB000030000000000000BB30 /* UIKit.framework */; };
+		BB000021000000000000BB21 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000002000000000000AAAA /* Metal.framework */; };
+		BB000022000000000000BB22 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA000004000000000000AAAA /* QuartzCore.framework */; };
+		BB000023000000000000BB23 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 089C1672FE841209C02AAC07 /* Foundation.framework */; };
+		BB000024000000000000BB24 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB000031000000000000BB31 /* CoreGraphics.framework */; };
+		BB000040000000000000BB40 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BB00001A000000000000BB1A /* LaunchScreen.storyboard */; };
+		BB000041000000000000BB41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB00001B000000000000BB1B /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +94,22 @@
 		AA000009000000000000AAAA /* MetalRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetalRenderer.h; sourceTree = "<group>"; };
 		AA000008000000000000AAAA /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		AA00000A000000000000AAAA /* MatrixUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MatrixUtils.h; sourceTree = "<group>"; };
+		/* FlurryTV file references */
+		BB000010000000000000BB10 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BB000011000000000000BB11 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BB000012000000000000BB12 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		BB000013000000000000BB13 /* FlurryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryViewController.h; sourceTree = "<group>"; };
+		BB000014000000000000BB14 /* FlurryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryViewController.m; sourceTree = "<group>"; };
+		BB000015000000000000BB15 /* FlurryPresetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlurryPresetManager.h; sourceTree = "<group>"; };
+		BB000016000000000000BB16 /* FlurryPresetManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlurryPresetManager.m; sourceTree = "<group>"; };
+		BB000017000000000000BB17 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		BB000018000000000000BB18 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		BB000019000000000000BB19 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BB00001A000000000000BB1A /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BB00001B000000000000BB1B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BB000030000000000000BB30 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BB000031000000000000BB31 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BB000050000000000000BB50 /* FlurryTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlurryTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,12 +124,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB000060000000000000BB60 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB000020000000000000BB20 /* UIKit.framework in Frameworks */,
+				BB000021000000000000BB21 /* Metal.framework in Frameworks */,
+				BB000022000000000000BB22 /* QuartzCore.framework in Frameworks */,
+				BB000023000000000000BB23 /* Foundation.framework in Frameworks */,
+				BB000024000000000000BB24 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		089C166AFE841209C02AAC07 /* Flurry */ = {
 			isa = PBXGroup;
 			children = (
+				BB000070000000000000BB70 /* FlurryTV */,
 				089C167CFE841241C02AAC07 /* Flurry source code */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
@@ -131,6 +183,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB000030000000000000BB30 /* UIKit.framework */,
 				AA000002000000000000AAAA /* Metal.framework */,
 				AA000004000000000000AAAA /* QuartzCore.framework */,
 				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
@@ -152,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				8D255AD30486D3F9007BF209 /* Flurry.saver */,
+				BB000050000000000000BB50 /* FlurryTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -183,6 +237,25 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		BB000070000000000000BB70 /* FlurryTV */ = {
+			isa = PBXGroup;
+			children = (
+				BB000010000000000000BB10 /* main.m */,
+				BB000011000000000000BB11 /* AppDelegate.h */,
+				BB000012000000000000BB12 /* AppDelegate.m */,
+				BB000013000000000000BB13 /* FlurryViewController.h */,
+				BB000014000000000000BB14 /* FlurryViewController.m */,
+				BB000015000000000000BB15 /* FlurryPresetManager.h */,
+				BB000016000000000000BB16 /* FlurryPresetManager.m */,
+				BB000017000000000000BB17 /* SettingsViewController.h */,
+				BB000018000000000000BB18 /* SettingsViewController.m */,
+				BB000019000000000000BB19 /* Info.plist */,
+				BB00001A000000000000BB1A /* LaunchScreen.storyboard */,
+				BB00001B000000000000BB1B /* Assets.xcassets */,
+			);
+			path = FlurryTV;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -204,6 +277,23 @@
 			productReference = 8D255AD30486D3F9007BF209 /* Flurry.saver */;
 			productType = "com.apple.product-type.bundle";
 		};
+		BB000080000000000000BB80 /* FlurryTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB000090000000000000BB90 /* Build configuration list for PBXNativeTarget "FlurryTV" */;
+			buildPhases = (
+				BB000081000000000000BB81 /* Resources */,
+				BB000082000000000000BB82 /* Sources */,
+				BB000060000000000000BB60 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FlurryTV;
+			productName = FlurryTV;
+			productReference = BB000050000000000000BB50 /* FlurryTV.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -224,6 +314,7 @@
 			projectRoot = "";
 			targets = (
 				8D255AC50486D3F9007BF209 /* Flurry */,
+				BB000080000000000000BB80 /* FlurryTV */,
 			);
 		};
 /* End PBXProject section */
@@ -238,6 +329,15 @@
 				E4DF70E70C8161BF00573540 /* Flurry.nib in Resources */,
 				E4DF71020C8161E000573540 /* displays.tif in Resources */,
 				E4DF71CF0C81666C00573540 /* Flurry.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB000081000000000000BB81 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB000040000000000000BB40 /* LaunchScreen.storyboard in Resources */,
+				BB000041000000000000BB41 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +360,28 @@
 				E4DF71170C8161E000573540 /* Texture.c in Sources */,
 				AA000005000000000000AAAA /* MetalRenderer.m in Sources */,
 				AA000007000000000000AAAA /* Shaders.metal in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB000082000000000000BB82 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB000001000000000000BB01 /* main.m in Sources */,
+				BB000002000000000000BB02 /* AppDelegate.m in Sources */,
+				BB000003000000000000BB03 /* FlurryViewController.m in Sources */,
+				BB000004000000000000BB04 /* FlurryPresetManager.m in Sources */,
+				BB000005000000000000BB05 /* SettingsViewController.m in Sources */,
+				BB000006000000000000BB06 /* FlurryUtils.m in Sources */,
+				BB000007000000000000BB07 /* Gl_saver.c in Sources */,
+				BB000008000000000000BB08 /* Particle.c in Sources */,
+				BB000009000000000000BB09 /* Smoke.c in Sources */,
+				BB00000A000000000000BB0A /* Spark.c in Sources */,
+				BB00000B000000000000BB0B /* Star.c in Sources */,
+				BB00000C000000000000BB0C /* Std.c in Sources */,
+				BB00000D000000000000BB0D /* Texture.c in Sources */,
+				BB00000E000000000000BB0E /* MetalRenderer.m in Sources */,
+				BB00000F000000000000BB0F /* Shaders.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +469,41 @@
 			};
 			name = Release;
 		};
+		BB000091000000000000BB91 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				INFOPLIST_FILE = FlurryTV/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.calumr.FlurryTV;
+				PRODUCT_NAME = FlurryTV;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+		BB000092000000000000BB92 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				INFOPLIST_FILE = FlurryTV/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.calumr.FlurryTV;
+				PRODUCT_NAME = FlurryTV;
+				SDKROOT = appletvos;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -364,6 +521,15 @@
 			buildConfigurations = (
 				EF7AD73208BB986600CE4634 /* Debug */,
 				EF7AD73308BB986600CE4634 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB000090000000000000BB90 /* Build configuration list for PBXNativeTarget "FlurryTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB000091000000000000BB91 /* Debug */,
+				BB000092000000000000BB92 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -1,0 +1,18 @@
+{
+  "images" : [
+    {
+      "idiom" : "tv",
+      "scale" : "1x",
+      "size" : "1280x768"
+    },
+    {
+      "idiom" : "tv-marketing",
+      "scale" : "1x",
+      "size" : "1280x768"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
